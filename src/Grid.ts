@@ -86,9 +86,9 @@ export default class Grid {
         // Check if grid is empty
         if (!this.checkGrid(b)) return false;
 
-        // Add id if new block
-        b.id = b.id || this._blockId++;
-
+        // Give unique id
+        b.id = this.uniqueId(b);
+        
         // Add block id to grid
         this.updateGrid(b);
 
@@ -101,6 +101,17 @@ export default class Grid {
         // Success
         return true;
     }
+
+    uniqueId(b: Block) {
+        // Get block ids
+        const blockIds = this._blocks.map(block => block.id);
+        // Check if it exists
+        const exists = blockIds.indexOf(b.id) > -1;
+        // Update id assigner
+        if (exists) this._blockId = Math.max(...blockIds) + 1;
+        // Return unique id
+        return exists ? this._blockId++ : b.id || this._blockId++;
+    }   
 
     findBlockAt(x: number, y: number): Block {
         const id = this._grid[y][x];
@@ -154,15 +165,15 @@ export default class Grid {
 
     draw(blockSize: number, margin = 5) {
         const p5 = this.p5;
-        this.drawGrid(blockSize);
-        this.drawBlocks(blockSize, margin);
-
         // Draw goal
         p5.push();
         p5.fill(100, 255, 100);
         p5.translate(this.goal.mult(blockSize));
         p5.rect(0, 0, blockSize, blockSize);
         p5.pop();
+
+        this.drawGrid(blockSize);
+        this.drawBlocks(blockSize, margin);
     }
 
     drawBlocks(blockSize, margin = 5) {

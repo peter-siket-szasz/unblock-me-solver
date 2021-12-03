@@ -37,7 +37,7 @@ const sketch = (p5: P5) => {
 			new Block(3, 0, 1, 2),
 			new Block(4, 0, 1, 3),
 		]);
-		p5.frameRate(3);
+		// p5.frameRate(3);
 	};
 
 	// The sketch draw method
