@@ -5,11 +5,15 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "allowJs": true,
+    "target": "ES6",
     "lib": [
-      "es6",
+      "ES6",
       "dom"
     ],
     "rootDir": "src",
     "moduleResolution": "node"
-  }
+  },
+  "exclude": [
+    "./dist/*"
+  ]
 }

@@ -1,25 +1,42 @@
-class Grid {
+import P5 from "p5";
+import { Block, Move } from './types';
+
+export default class Grid {
 
     private _blockId = 2;
     private _size: number;
     private _solution: Move[];
 
-    private _blocks: Block[];
+    private _blocks: Block[] = [];
     private _player: Block;
-    private _goal: Coord;
+    private _goal: P5.Vector;
     private _grid: number[][];
 
-    constructor(n: number = 6,
+    constructor(
+        private p5: P5,
+        n: number = 6,
         player: Block = new Block(0, 2, 2, 1, 1),
-        goal: Coord = { x: 5, y: 2 }
+        goal: P5.Vector = new P5.Vector().set(5, 2)
     ) {
-
+        this._size = n;
         this._grid = Array.from({ length: n }).map(_ =>
             Array.from({ length: n }).map(_ => 0)
         );
         this._player = player;
         this._goal = goal;
         this.addBlock(player);
+    }
+
+    get player() {
+        return this._player;
+    }
+
+    set player(p: Block) {
+        this._player = p;
+    }
+
+    get goal() {
+        return new P5.Vector().set(this._goal);
     }
 
 
@@ -115,6 +132,57 @@ class Grid {
 
     solved() {
         // Check if the row of the player is empty in front of the player
-        return this._grid[this._player.y].slice(this._player.x + this._player.w).every(x => !x);
+        return this._grid[this.player.y].slice(this.player.x + this.player.w).every(x => !x);
+    }
+
+    draw(blockSize: number, margin = 5) {
+        const p5 = this.p5;
+        this.drawGrid(blockSize);
+        this.drawBlocks(blockSize, margin);
+
+        // Draw goal
+        p5.push();
+        p5.fill(100, 255, 100);
+        p5.translate(this.goal.mult(blockSize));
+        p5.rect(0, 0, blockSize, blockSize);
+        p5.pop();
+    }
+
+    drawBlocks(blockSize, margin = 5) {
+        const p5 = this.p5;
+        p5.stroke(0);
+        p5.strokeWeight(2);
+        this._blocks.forEach(b => {
+            p5.push();
+            // Fill red if player, gray otherwise
+            p5.fill(b.id === 1 ? 255 : 100, 100, 100);
+            // Translate by block position
+            p5.translate(b.pos.mult(blockSize).add(margin, margin));
+            // Define size
+            const size = b.size.mult(blockSize).sub(2 * margin, 2 * margin);
+            // Draw in local coord system
+            p5.rect(0, 0, size.x, size.y);
+            p5.pop();
+        });
+    }
+
+    drawGrid(blockSize: number) {
+        const p5 = this.p5;
+        p5.stroke(0);
+        p5.strokeWeight(2);
+        Array.from({length: this._size}).forEach((_, idx) => {
+            idx += 1;
+            // Horizontal line
+            p5.push();
+            p5.translate(idx * blockSize, 0);
+            p5.line(0, 0, 0, this._size * blockSize);
+            p5.pop();
+
+            // Vertical line
+            p5.push();
+            p5.translate(0, idx * blockSize)
+            p5.line(0, 0, this._size * blockSize, 0);
+            p5.pop();
+        });
     }
 }

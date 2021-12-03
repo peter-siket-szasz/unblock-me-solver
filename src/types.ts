@@ -1,4 +1,6 @@
-class Block {
+import P5 from "p5";
+
+export class Block {
     dir: 'x' | 'y';
 
     constructor(
@@ -11,17 +13,25 @@ class Block {
         this.dir = w > h ? 'x' : 'y';
     }
 
+    get pos(): P5.Vector {
+        return new P5.Vector().set(this.x, this.y);
+    }
+
+    get size(): P5.Vector {
+        return new P5.Vector().set(this.w, this.h);
+    }
+
     copy() {
         return new Block(this.x, this.y, this.w, this.h, this.id);
     }
 }
 
-interface Coord {
+export interface Coord {
     x: number,
     y: number
 }
 
-class Move {
+export class Move {
     dir: 1 | -1;
     constructor(
         public blockId: number,
