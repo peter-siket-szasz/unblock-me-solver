@@ -39,6 +39,18 @@ export default class Grid {
         return new P5.Vector().set(this._goal);
     }
 
+    get size() {
+        return this._size;
+    }
+
+    get id() {
+        let res = '';
+        this._grid.forEach(row => {
+            res += row.join('');
+        });
+        return res;
+    }
+
 
     inBounds(b: Block): Boolean {
         const { x, y, w, h, id } = b;
@@ -90,9 +102,14 @@ export default class Grid {
         return true;
     }
 
+    findBlockAt(x: number, y: number): Block {
+        const id = this._grid[y][x];
+        return this._blocks.find(block => block.id === id);
+    }
+
     removeBlock(b: Block): Block {
         // Find index of block if exists
-        const idx = this._blocks.findIndex(block => block.id === b.id);
+        const idx = this._blocks.findIndex(block => block.id === b?.id);
         let removed: Block;
         if (idx >= 0) {
             removed = this._blocks.splice(idx, 1)[0]; // Get removed block
@@ -127,7 +144,7 @@ export default class Grid {
         this.removeBlock(b);
         // Update position
         b[b.dir] += m.n;
-        return this.addBlock(b);
+        return this.addBlock(b, true);
     }
 
     solved() {

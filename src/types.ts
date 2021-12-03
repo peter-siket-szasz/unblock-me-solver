@@ -17,6 +17,11 @@ export class Block {
         return new P5.Vector().set(this.x, this.y);
     }
 
+    set pos(p: P5.Vector) {
+        this.x = p.x;
+        this.y = p.y;
+    } 
+
     get size(): P5.Vector {
         return new P5.Vector().set(this.w, this.h);
     }
