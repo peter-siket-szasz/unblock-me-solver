@@ -44,11 +44,7 @@ export default class Grid {
     }
 
     get id() {
-        let res = '';
-        this._grid.forEach(row => {
-            res += row.join('');
-        });
-        return res;
+        return this._blocks.map(b => '' + b.id + b.x + b.y).join('');
     }
 
 
@@ -70,12 +66,15 @@ export default class Grid {
 
     updateGrid(b: Block, add=true) {
         const {x, y, w, h, id} = b;
-        Array.from({length: w}).forEach((_, idx) => {
-            this._grid[y][x + idx] = add ? id : 0;
-        });
-        Array.from({length: h}).forEach((_, idx) => {
-            this._grid[y + idx][x] = add ? id : 0;
-        });
+        if (b.dir === 'x') {
+            Array.from({length: w}).forEach((_, idx) => {
+                this._grid[y][x + idx] = add ? id : 0;
+            });
+        } else {
+            Array.from({length: h}).forEach((_, idx) => {
+                this._grid[y + idx][x] = add ? id : 0;
+            });
+        }
         return true;
     }
 
