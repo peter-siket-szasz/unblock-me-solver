@@ -1,21 +1,19 @@
 import P5 from "p5";
 import { Block, Move } from "./types";
 
-export class State {
+export default class State {
     cost: number;
     cols: number;
     rows: number;
     player: Block;
     hval: number;
-    children: State[];
 
-    constructor(private blocks: Block[], private grid: Boolean[][], public gval: number, public move: Move, public parent: State, private goal: P5.Vector) {
+    constructor(private blocks: Block[], private grid: boolean[][], public gval: number, public move: Move, public parent: State, private goal: P5.Vector) {
         this.rows = grid.length;
         this.cols = grid[0].length;
         this.player = blocks.find(b => b.id === 1);
         this.hval = this.calculateHval();
         this.cost = gval + this.hval;
-        this.children = this.getChildren();
     }
 
     // Unique indentifier for this state
@@ -39,7 +37,7 @@ export class State {
         return res;
     }
 
-    static updateGrid(m: Move, b: Block, grid: Boolean[][]) {
+    static updateGrid(m: Move, b: Block, grid: boolean[][]) {
         // Make copy of grid
         const gridCopy = grid.map(arr => arr.slice());
         // Id mismatch
@@ -135,13 +133,13 @@ export class State {
         return res;
     }
 
-    createInitState(blocks: Block[], n = 6, goal: P5.Vector = new P5.Vector().set(5, 2)): State {
+    static createInitState(blocks: Block[], n = 6, goal: P5.Vector = new P5.Vector().set(5, 2)): State {
         // Init grid
-        const grid = Array.from({ length: n }).map(_ =>
+        let grid = Array.from({ length: n }).map(_ =>
             Array.from({ length: n }).map(_ => false)
         );
         // Setup grid with unmoved blocks
-        blocks.forEach(b => State.updateGrid(new Move(b.id, 0), b, grid));
-        return new State(blocks,  grid, 0, new Move(0, 0), undefined, goal);
+        blocks.forEach(b => grid = State.updateGrid(new Move(b.id, 0), b, grid));
+        return new State(blocks, grid, 0, new Move(0, 0), undefined, goal);
     }
 }

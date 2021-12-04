@@ -5,12 +5,13 @@ export default class Grid {
 
     private _blockId = 2;
     private _size: number;
-    private _solution: Move[];
-
+    
     private _blocks: Block[] = [];
     private _player: Block;
     private _goal: P5.Vector;
     private _grid: number[][];
+    
+    public solution: Move[];
 
     constructor(
         private p5: P5,
@@ -33,6 +34,10 @@ export default class Grid {
 
     set player(p: Block) {
         this._player = p;
+    }
+
+    get blocks() {
+        return this._blocks;
     }
 
     get goal() {
@@ -95,7 +100,7 @@ export default class Grid {
         this._blocks.push(b);
 
         // Reset solution if block added outside solve
-        if (!safe) this._solution = [];
+        if (!safe) this.solution = [];
 
         // Success
         return true;
@@ -141,12 +146,14 @@ export default class Grid {
         });
 
         // Return block into grid
-        this.addBlock(b);
+        this.addBlock(b, true);
 
         return success;
     }
 
     moveBlock(b: Block, m: Move): Boolean {
+        // Find block based on move id if not given
+        b = b || this._blocks.find(block => block.id === m.blockId);
         // Don't do anything if move is illegal
         if (!this.legalMove(b, m)) return false;
         

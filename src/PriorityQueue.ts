@@ -1,6 +1,6 @@
 // Adapted to TS from here:
 // https://stackoverflow.com/questions/42919469/efficient-way-to-implement-priority-queue-in-javascript
-class PriorityQueue<T> {
+export default class PriorityQueue<T> {
     
     private top = 0;
     private parent = i => ((i + 1) >>> 1) - 1;

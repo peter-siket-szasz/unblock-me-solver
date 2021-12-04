@@ -3,7 +3,9 @@ import "p5/lib/addons/p5.dom";
 import "./styles.scss";
 
 import Grid from "./Grid";
+import Search from "./Search";
 import { Block } from "./types";
+import State from "./State";
 
 // Creating the sketch itself
 const sketch = (p5: P5) => {
@@ -17,12 +19,30 @@ const sketch = (p5: P5) => {
 
 	let selectedBlock: Block;
 
+	let playSolution = false;
+	let solutionMoveIdx = 0;
+
+	const playButton = <HTMLInputElement> document.getElementById('play');
+	const searchButton = <HTMLInputElement> document.getElementById('search');
+	const restartButton = <HTMLInputElement> document.getElementById('restart');
+	searchButton.onclick = () => search(grid);
+	playButton.onclick = () => playSolution = true;
+	restartButton.onclick = () => p5.setup();
+
+	
+
 	// The sketch setup method 
 	p5.setup = () => {
 		// Creating and positioning the canvas
 		const canvas = p5.createCanvas(boardSize, boardSize + controlsSize);
 		canvas.parent("app");
 		canvas.mousePressed(() => canvasPressed(p5.mouseX, p5.mouseY, blockSize));
+
+		// Search
+		playSolution = false;
+		solutionMoveIdx = 0;
+	
+
 
 		// Configuring the canvas
 		p5.background(220);
@@ -37,7 +57,6 @@ const sketch = (p5: P5) => {
 			new Block(3, 0, 1, 2),
 			new Block(4, 0, 1, 3),
 		]);
-		// p5.frameRate(3);
 	};
 
 	// The sketch draw method
@@ -61,6 +80,11 @@ const sketch = (p5: P5) => {
 			p5.rect(0, 0, selectedBlock.w * blockSize - 2 * margin, selectedBlock.h * blockSize - 2 * margin);
 			p5.pop();
 		}
+
+		// Animate solution
+		if (playSolution && solutionMoveIdx < grid.solution.length && p5.frameCount % 30 === 0) {
+			grid.moveBlock(undefined, grid.solution[solutionMoveIdx++]);
+		}
 	};
 
 	const initAdditionalBlocks = (p5: P5, blocks: Block[]) => {
@@ -68,7 +92,7 @@ const sketch = (p5: P5) => {
 		g.removeBlock(g.player);
 		blocks.forEach(block => g.addBlock(block));
 		return g;
-	}
+	};
 
 	const canvasPressed = (mouseX: number, mouseY: number, blockSize: number) => {
 		const [x, y] = [Math.floor(mouseX / blockSize), Math.floor(mouseY / blockSize)];
@@ -95,6 +119,21 @@ const sketch = (p5: P5) => {
 			if (selectedBlock?.id === 1) grid.addBlock(selectedBlock);
 			selectedBlock = addGrid.findBlockAt(x, y - grid.size);
 		}
+	};
+
+	const search = (grid: Grid) => {
+		const initState = State.createInitState(grid.blocks);
+		const searchObj = new Search();
+		const solution = searchObj.search(initState);
+		let node = solution;
+		while (node) {
+			grid.solution.push(node.move);
+			node = node.parent;
+		}
+		grid.solution = grid.solution.reverse().slice(1); // Remove initial 0 move
+
+		playButton.disabled = false;
+		return solution;
 	}
 };
 
