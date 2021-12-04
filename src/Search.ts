@@ -34,7 +34,7 @@ export default class Search {
 
         while (!this.frontier.isEmpty()) {
             if (expandedNodes % 10000 === 0) 
-            console.log('Nodes expanded: ', expandedNodes);
+                console.log('Nodes expanded: ', expandedNodes);
             // Pop the next node (with lowest cost)
             const node = this.frontier.pop();
             // Return if it's solution
@@ -42,10 +42,8 @@ export default class Search {
             // Add to visited
             this.visited[node.id] = node.gval;
 
-            // Generate children
-            let children = node.getChildren();
-            // Check if any are already visited by a cheaper path. If not then reopen
-            children = children.filter(c => !(this.visited[c.id] >= c.gval));
+            // Generate children and check if any are already visited by a cheaper path. If not then reopen
+            let children = node.getChildren().filter(c => !(this.visited[c.id] >= c.gval));
             // Insert children into frontier
             this.frontier.push(...children);
             expandedNodes++;
