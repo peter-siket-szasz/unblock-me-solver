@@ -7,6 +7,12 @@
 			href="https://fonts.googleapis.com/css?family=Montserrat&display=swap"
 			rel="stylesheet"
 		/>
+		<!-- Material -->
+		<link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+		<script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" 
+		integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 	</head>
 
 	<body>
@@ -14,9 +20,33 @@
 			<h1>Unblock me!</h1>
 			<div id="app"></div>
 			<div id="buttons">
-				<button id="search">Search!</button>
-				<button id="play" disabled>Play solution</button>
-				<button id="restart">Restart</button>
+				<div class="row text-center">
+					<button class="mdc-button mdc-button--raised" id="search">
+						<span class="mdc-button__ripple"></span>
+						Solve!
+					</button>
+					<button class="mdc-button mdc-button--raised" disabled id="play">
+						<span class="mdc-button__ripple"></span>
+						Play solution
+					</button>
+					<button class="mdc-button mdc-button--raised" id="restart">
+						<span class="mdc-button__ripple"></span>
+						Restart
+					</button>
+				</div>
+				<div class="row text-center">
+					<button class="mdc-button mdc-button--raised" id="prev">
+						<span class="mdc-button__ripple"></span>
+						Previous move
+					</button>
+					<button class="mdc-button mdc-button--raised" id="next">
+						<span class="mdc-button__ripple"></span>
+						Next move
+					</button>
+				</div>
+			</div>
+			<div class="solution-wrapper">
+				<p id="solution"></p>
 			</div>
 		</div>
 		<script src="src/app.ts"></script>

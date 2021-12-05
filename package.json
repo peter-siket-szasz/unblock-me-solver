@@ -8,6 +8,8 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
+    "@material/button": "^13.0.0",
+    "@material/ripple": "^13.0.0",
     "@types/p5": "0.9.0",
     "p5": "0.9.0"
   },

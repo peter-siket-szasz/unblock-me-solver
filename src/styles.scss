@@ -16,3 +16,17 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+.mdc-button {
+    font-size: 1rem;
+} 
+
+#buttons button {
+    margin: 1rem;
+    background-color: #b2cbe6;
+    color: black;
+    &:disabled {
+        background-color: #e0eaf5;
+        color: #777777;
+    }
+}

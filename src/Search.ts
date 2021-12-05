@@ -34,8 +34,9 @@ export default class Search {
             frontier.push(...node.getChildren());
         }
 
-        console.log('Search duration: ', (Date.now() - startTime) / 1000, 's');
+        const duration = (Date.now() - startTime) / 1000
+        console.log('Search duration: ', duration, 's');
         console.log(solution);
-        return solution;
+        return { solution, duration };
     }
 }

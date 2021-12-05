@@ -4,7 +4,7 @@ import "./styles.scss";
 
 import Grid from "./Grid";
 import Search from "./Search";
-import { Block } from "./types";
+import { Block, Move } from "./types";
 import State from "./State";
 
 // Creating the sketch itself
@@ -13,6 +13,8 @@ const sketch = (p5: P5) => {
 	const boardSize = 400;
 	const n = 6;
 	const blockSize = boardSize / n;
+
+	const bg_color = p5.color(224, 236, 245);
 
 	let grid: Grid;
 	let addGrid: Grid;
@@ -25,27 +27,34 @@ const sketch = (p5: P5) => {
 	const playButton = <HTMLInputElement> document.getElementById('play');
 	const searchButton = <HTMLInputElement> document.getElementById('search');
 	const restartButton = <HTMLInputElement> document.getElementById('restart');
+	const prevMoveButton = <HTMLInputElement> document.getElementById('prev');
+	const nextMoveButton = <HTMLInputElement> document.getElementById('next');
 	searchButton.onclick = () => search(grid);
 	playButton.onclick = () => playSolution = true;
 	restartButton.onclick = () => p5.setup();
+	prevMoveButton.onclick = () => makePreviousMove();
+	nextMoveButton.onclick = () => makeNextMove();
+
+	const solutionEl = document.getElementById('solution');
 
 	
-
 	// The sketch setup method 
 	p5.setup = () => {
 		// Creating and positioning the canvas
 		const canvas = p5.createCanvas(boardSize, boardSize + controlsSize);
 		canvas.parent("app");
+		canvas.class('mx-auto');
 		canvas.mousePressed(() => canvasPressed(p5.mouseX, p5.mouseY, blockSize));
 
 		// Search
 		playSolution = false;
 		solutionMoveIdx = 0;
-	
 
-
+		setButtonsDisabled(true);
+		solutionEl.innerHTML = '';
+		
 		// Configuring the canvas
-		p5.background(220);
+		p5.background(bg_color);
 
 		// Grid
 		grid = new Grid(p5, n);
@@ -62,7 +71,7 @@ const sketch = (p5: P5) => {
 	// The sketch draw method
 	p5.draw = () => {
 		const margin = 5;
-		p5.background(220);
+		p5.background(bg_color);
 		grid.draw(blockSize, margin);
 
 		// Draw additional blocks
@@ -82,10 +91,25 @@ const sketch = (p5: P5) => {
 		}
 
 		// Animate solution
-		if (playSolution && solutionMoveIdx < grid.solution.length && p5.frameCount % 60 === 0) {
-			grid.moveBlock(undefined, grid.solution[solutionMoveIdx++]);
+		if (playSolution && solutionMoveIdx < grid.solution.length && p5.frameCount % 30 === 0) {
+			makeNextMove();
+			playSolution = true;
 		}
 	};
+
+	const makePreviousMove = () => {
+		playSolution = false;
+		if (solutionMoveIdx > 0) {
+			// Reverse move
+			const previousMove = grid.solution[--solutionMoveIdx];
+			grid.moveBlock(undefined, new Move(previousMove.blockId, -previousMove.n));
+		}
+	}
+	const makeNextMove = () => {
+		playSolution = false;
+		if (solutionMoveIdx < grid.solution.length)
+			grid.moveBlock(undefined, grid.solution[solutionMoveIdx++]);
+	}
 
 	const initAdditionalBlocks = (p5: P5, blocks: Block[]) => {
 		const g = new Grid(p5, n);
@@ -103,15 +127,19 @@ const sketch = (p5: P5) => {
 				const block = selectedBlock.copy();
 				block.pos = new P5.Vector().set(x, y);
 				const success = grid.addBlock(block);
+				setButtonsDisabled(true);
 				// Update or restore if player
 				if (selectedBlock.id === 1) {
-					if (success) grid.player = selectedBlock;
-					else grid.addBlock(grid.player);
+					if (success)
+						grid.player = selectedBlock;
+					else
+						grid.addBlock(grid.player);
 				}
 				selectedBlock = undefined;
 			// If no block selected, select the one clicked on
 			} else {
 				selectedBlock = grid.removeBlock(grid.findBlockAt(x, y));
+				setButtonsDisabled(true);
 			}
 		// Second grid is clicked
 		} else {
@@ -123,11 +151,22 @@ const sketch = (p5: P5) => {
 
 	const search = (grid: Grid) => {
 		const initState = State.createInitState(grid.blocks);
-		const solution = Search.search(initState);
+		const { solution, duration } = Search.search(initState);
 		grid.solution = State.extractSolutionMoves(solution);
 
-		playButton.disabled = false;
+		if (solution) {
+			setButtonsDisabled(false);
+			solutionEl.innerHTML = 'Solution found in: ' + duration + 's! Number of moves: ' + solution.gval;
+		} else {
+			solutionEl.innerHTML = 'No solution! Searh duration: ' + duration + 's!';
+		}
 		return solution;
+	};
+
+	const setButtonsDisabled = (b: boolean) => {
+		playButton.disabled = b;
+		prevMoveButton.disabled = b;
+		nextMoveButton.disabled = b;
 	}
 };
 
