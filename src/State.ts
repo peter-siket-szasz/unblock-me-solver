@@ -18,7 +18,7 @@ export default class State {
 
     // Unique indentifier for this state
     get id() {
-        return this.blocks.map(b => '' + b.id + b.x + b.y).join('');
+        return this.blocks.sort((a, b) => a.id - b.id).map(b => '' + b.id + b.x + b.y).join('');
     }
 
     // If player is at goal 

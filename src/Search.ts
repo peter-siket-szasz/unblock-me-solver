@@ -33,19 +33,22 @@ export default class Search {
         let expandedNodes = 0;
 
         while (!this.frontier.isEmpty()) {
-            if (expandedNodes % 10000 === 0) 
-                console.log('Nodes expanded: ', expandedNodes);
             // Pop the next node (with lowest cost)
             const node = this.frontier.pop();
+            if (this.visited[node.id] && this.visited[node.id] <= node.gval)
+                continue;
+            // if (expandedNodes % 10000 === 0) {
+            //     console.log('Nodes expanded: ', expandedNodes);
+            //     console.log('Depth: ', node.gval);
+            //     console.log('Frontier size: ', this.frontier.size());
+            // }
             // Return if it's solution
             if (node.solved) return node;
             // Add to visited
             this.visited[node.id] = node.gval;
 
-            // Generate children and check if any are already visited by a cheaper path. If not then reopen
-            let children = node.getChildren().filter(c => !(this.visited[c.id] >= c.gval));
-            // Insert children into frontier
-            this.frontier.push(...children);
+            // Generate children and insert into frontier
+            this.frontier.push(...node.getChildren());
             expandedNodes++;
         }
 
