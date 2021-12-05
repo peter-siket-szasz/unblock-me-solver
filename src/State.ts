@@ -6,19 +6,18 @@ export default class State {
     cols: number;
     rows: number;
     player: Block;
-    hval: number;
 
     constructor(private blocks: Block[], private grid: boolean[][], public gval: number, public move: Move, public parent: State, private goal: P5.Vector) {
         this.rows = grid.length;
         this.cols = grid[0].length;
         this.player = blocks.find(b => b.id === 1);
-        this.hval = this.calculateHval();
-        this.cost = gval + this.hval;
+        // this.cost = gval + this.calculateHval(); // A*
+        this.cost = gval; // Breadth first search
     }
 
-    // Unique indentifier for this state
+    // Unique indentifier for this state (assumes blocks are always in same order)
     get id() {
-        return this.blocks.sort((a, b) => a.id - b.id).map(b => '' + b.id + b.x + b.y).join('');
+        return this.blocks.map(b => '' + b.x + b.y).join('');
     }
 
     // If player is at goal 
@@ -78,7 +77,7 @@ export default class State {
                 newBlock[newBlock.dir] += n;
                 // Create new blocks array, replace old block with updated
                 const newBlocks = this.blocks.slice();
-                newBlocks.splice(idx, 1, newBlock);
+                newBlocks[idx] = newBlock;
                 // Add new state to result
                 res.push(new State(newBlocks, newGrid, this.gval + 1, move, this, this.goal));
             });
@@ -141,5 +140,15 @@ export default class State {
         // Setup grid with unmoved blocks
         blocks.forEach(b => grid = State.updateGrid(new Move(b.id, 0), b, grid));
         return new State(blocks, grid, 0, new Move(0, 0), undefined, goal);
+    }
+
+    static extractSolutionMoves(state: State) {
+        const solution: Move[] = [];
+        while (state) {
+			solution.push(state.move);
+			state = state.parent;
+		}
+		return solution.reverse().slice(1); // Remove initial 0 move
+
     }
 }

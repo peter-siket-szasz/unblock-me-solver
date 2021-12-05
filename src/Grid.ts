@@ -33,20 +33,7 @@ export default class Grid {
     }
 
     set player(p: Block) {
-        // Create a copy with id 1
-        const b = p.copy();
-        b.id = 1;
-        // Remove player
-        const player = this.removeBlock(this.player);
-        // Try to add new player
-        const success = this.addBlock(b);
-        // If success, replace player
-        if (success)
-            this._player = b;
-        // Otherwise restore orginal player
-        else
-            this.addBlock(player);
-
+        this._player = p;
     }
 
     get blocks() {

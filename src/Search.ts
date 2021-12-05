@@ -1,57 +1,41 @@
 import State from './State';
-import PriorityQueue from './PriorityQueue';
 
 export default class Search {
-    frontier: PriorityQueue<State>;
-    visited: object; // To store visited states {id: gval}
-    solution: State;
-
     constructor() {
     }
 
-    search(initState: State) {
-        // Initialize an empty frontier and reset visited
-        this.initStatus();
+    static search(initState: State) {
+        const visited = {};
+        const frontier: State[] = [];
+        let solution: State = undefined;
         // Add the initial state
-        this.frontier.push(initState);
+        frontier.push(initState);
         
         // Keep track of search time
         const startTime = Date.now();
         // Get solution
-        this.solution = this.searchFrontier();
-        console.log('Search duration: ', (Date.now() - startTime) / 1000, 's');
-        console.log(this.solution);
-        return this.solution;
-    }
-
-    initStatus() {
-        this.frontier = new PriorityQueue((a, b) => a.cost < b.cost);
-        this.visited = {};
-    }
-
-    searchFrontier(): State {
-        let expandedNodes = 0;
-
-        while (!this.frontier.isEmpty()) {
-            // Pop the next node (with lowest cost)
-            const node = this.frontier.pop();
-            if (this.visited[node.id] && this.visited[node.id] <= node.gval)
-                continue;
-            // if (expandedNodes % 10000 === 0) {
-            //     console.log('Nodes expanded: ', expandedNodes);
-            //     console.log('Depth: ', node.gval);
-            //     console.log('Frontier size: ', this.frontier.size());
-            // }
+        while (frontier.length > 0) {
+            // Pop the first node in the frontier (Breadth first search)
+            const node = frontier.shift();
+            
             // Return if it's solution
-            if (node.solved) return node;
+            if (node.solved) {
+                solution = node;
+                break;
+            }
+            // Check if it's been expanded via a cheaper path
+            if (visited[node.id] && visited[node.id] <= node.gval)
+                continue;
+            
             // Add to visited
-            this.visited[node.id] = node.gval;
+            visited[node.id] = node.gval;
 
             // Generate children and insert into frontier
-            this.frontier.push(...node.getChildren());
-            expandedNodes++;
+            frontier.push(...node.getChildren());
         }
 
-        return undefined;
+        console.log('Search duration: ', (Date.now() - startTime) / 1000, 's');
+        console.log(solution);
+        return solution;
     }
 }

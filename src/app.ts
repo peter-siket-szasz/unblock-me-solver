@@ -82,7 +82,7 @@ const sketch = (p5: P5) => {
 		}
 
 		// Animate solution
-		if (playSolution && solutionMoveIdx < grid.solution.length && p5.frameCount % 30 === 0) {
+		if (playSolution && solutionMoveIdx < grid.solution.length && p5.frameCount % 60 === 0) {
 			grid.moveBlock(undefined, grid.solution[solutionMoveIdx++]);
 		}
 	};
@@ -123,14 +123,8 @@ const sketch = (p5: P5) => {
 
 	const search = (grid: Grid) => {
 		const initState = State.createInitState(grid.blocks);
-		const searchObj = new Search();
-		const solution = searchObj.search(initState);
-		let node = solution;
-		while (node) {
-			grid.solution.push(node.move);
-			node = node.parent;
-		}
-		grid.solution = grid.solution.reverse().slice(1); // Remove initial 0 move
+		const solution = Search.search(initState);
+		grid.solution = State.extractSolutionMoves(solution);
 
 		playButton.disabled = false;
 		return solution;
