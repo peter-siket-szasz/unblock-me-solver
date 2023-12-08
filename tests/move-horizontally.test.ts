@@ -1,4 +1,5 @@
-import { Block, getHorizontalMoves } from '..';
+import { getHorizontalMoves } from '../utils/getMoves';
+import { Block } from '../types/types';
 
 describe('getHorizontalMoves', () => {
   it('should return all possible moves for a block', () => {
@@ -12,8 +13,8 @@ describe('getHorizontalMoves', () => {
     const result = getHorizontalMoves(block, blocks, 6);
 
     expect(result).toEqual([
-      { id: 2, amount: -1 }, // move left by 1
-      { id: 2, amount: 1 }, // move right by 1
+      { id: 2, amount: -1, dir: 'x' }, // move left by 1
+      { id: 2, amount: 1, dir: 'x' }, // move right by 1
     ]);
   });
 
@@ -22,11 +23,11 @@ describe('getHorizontalMoves', () => {
     const blocks = [block];
     const moves = getHorizontalMoves(block, blocks, 6);
     expect(moves).toEqual([
-      { id: 1, amount: -1 },
-      { id: 1, amount: 1 },
-      { id: 1, amount: 2 },
-      { id: 1, amount: 3 },
-      { id: 1, amount: 4 },
+      { id: 1, amount: -1, dir: 'x' },
+      { id: 1, amount: 1, dir: 'x' },
+      { id: 1, amount: 2, dir: 'x' },
+      { id: 1, amount: 3, dir: 'x' },
+      { id: 1, amount: 4, dir: 'x' },
     ]);
   });
 
@@ -35,9 +36,9 @@ describe('getHorizontalMoves', () => {
     const blocks = [block];
     const moves = getHorizontalMoves(block, blocks, 6);
     expect(moves).toEqual([
-      { id: 1, amount: 1 },
-      { id: 1, amount: 2 },
-      { id: 1, amount: 3 },
+      { id: 1, amount: 1, dir: 'x' },
+      { id: 1, amount: 2, dir: 'x' },
+      { id: 1, amount: 3, dir: 'x' },
     ]);
   });
 
@@ -49,7 +50,7 @@ describe('getHorizontalMoves', () => {
     ];
     const block = blocks[0];
     const moves = getHorizontalMoves(block, blocks, 6);
-    expect(moves).toEqual([{ id: 1, amount: 1 }]);
+    expect(moves).toEqual([{ id: 1, amount: 1, dir: 'x' }]);
   });
   it('should handle taller blocks as moving', () => {
     const blocks: Block[] = [
@@ -60,8 +61,8 @@ describe('getHorizontalMoves', () => {
     const block = blocks[0];
     const moves = getHorizontalMoves(block, blocks, 6);
     expect(moves).toEqual([
-      { id: 1, amount: 1 },
-      { id: 1, amount: 2 },
+      { id: 1, amount: 1, dir: 'x' },
+      { id: 1, amount: 2, dir: 'x' },
     ]);
   });
   test('should handle complex setup of blocks and possible moves', () => {
@@ -74,6 +75,6 @@ describe('getHorizontalMoves', () => {
       { x: 1, y: 4, width: 3, height: 1, id: 6 },
     ];
     const moves = getHorizontalMoves(blocks[0], blocks, 6);
-    expect(moves).toEqual([{ id: 1, amount: -1 }]);
+    expect(moves).toEqual([{ id: 1, amount: -1, dir: 'x' }]);
   });
 });
