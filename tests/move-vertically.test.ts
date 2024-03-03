@@ -10,7 +10,7 @@ describe('getVerticalMoves', () => {
     ];
 
     const block = blocks[1];
-    const result = getVerticalMoves(block, blocks, 6);
+    const result = getVerticalMoves(block, blocks, 6, true);
 
     expect(result).toEqual([
       { id: 2, amount: -1, dir: 'y' }, // move up by 1
@@ -29,7 +29,7 @@ describe('getVerticalMoves', () => {
     ];
 
     const block = blocks[1];
-    const result = getVerticalMoves(block, blocks, 6);
+    const result = getVerticalMoves(block, blocks, 6, true);
 
     expect(result).toEqual([
       { id: 2, amount: -1, dir: 'y' }, // move up by 1
@@ -44,7 +44,7 @@ describe('getVerticalMoves', () => {
     ];
 
     const block = blocks[1];
-    const result = getVerticalMoves(block, blocks, 6);
+    const result = getVerticalMoves(block, blocks, 6, true);
 
     expect(result).toEqual([
       { id: 2, amount: -1, dir: 'y' }, // move up by 1
@@ -60,7 +60,7 @@ describe('getVerticalMoves', () => {
     ];
 
     const block = blocks[1];
-    const result = getVerticalMoves(block, blocks, 12);
+    const result = getVerticalMoves(block, blocks, 12, true);
 
     expect(result).toEqual([
       { id: 2, amount: -1, dir: 'y' }, // move up by 1
@@ -76,11 +76,20 @@ describe('getVerticalMoves', () => {
     ];
 
     const block = blocks[1];
-    const result = getVerticalMoves(block, blocks, 12);
+    const result = getVerticalMoves(block, blocks, 12, true);
 
     expect(result).toEqual([
       { id: 2, amount: -1, dir: 'y' }, // move up by 1
       { id: 2, amount: 1, dir: 'y' }, // move down by 1
     ]);
+  });
+
+  it('should return no moves for a wide block when bidirectional movement is restricted', () => {
+    const blocks: Block[] = [{ id: 2, x: 2, y: 5, width: 3, height: 1 }];
+
+    const block = blocks[0];
+    const result = getVerticalMoves(block, blocks, 12);
+
+    expect(result).toEqual([]);
   });
 });

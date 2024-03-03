@@ -10,7 +10,7 @@ describe('getHorizontalMoves', () => {
     ];
     const block = blocks[1];
 
-    const result = getHorizontalMoves(block, blocks, 6);
+    const result = getHorizontalMoves(block, blocks, 6, true);
 
     expect(result).toEqual([
       { id: 2, amount: -1, dir: 'x' }, // move left by 1
@@ -21,7 +21,7 @@ describe('getHorizontalMoves', () => {
   it('should not move beyond the edges', () => {
     const block = { x: 1, y: 0, width: 1, height: 1, id: 1 } satisfies Block;
     const blocks = [block];
-    const moves = getHorizontalMoves(block, blocks, 6);
+    const moves = getHorizontalMoves(block, blocks, 6, true);
     expect(moves).toEqual([
       { id: 1, amount: -1, dir: 'x' },
       { id: 1, amount: 1, dir: 'x' },
@@ -34,7 +34,7 @@ describe('getHorizontalMoves', () => {
   it('should handle wider blocks', () => {
     const block = { x: 0, y: 0, width: 3, height: 1, id: 1 } satisfies Block;
     const blocks = [block];
-    const moves = getHorizontalMoves(block, blocks, 6);
+    const moves = getHorizontalMoves(block, blocks, 6, true);
     expect(moves).toEqual([
       { id: 1, amount: 1, dir: 'x' },
       { id: 1, amount: 2, dir: 'x' },
@@ -49,7 +49,7 @@ describe('getHorizontalMoves', () => {
       { x: 3, y: 0, width: 1, height: 3, id: 2 },
     ];
     const block = blocks[0];
-    const moves = getHorizontalMoves(block, blocks, 6);
+    const moves = getHorizontalMoves(block, blocks, 6, true);
     expect(moves).toEqual([{ id: 1, amount: 1, dir: 'x' }]);
   });
   it('should handle taller blocks as moving', () => {
@@ -59,13 +59,13 @@ describe('getHorizontalMoves', () => {
       { x: 3, y: 0, width: 1, height: 3, id: 2 },
     ];
     const block = blocks[0];
-    const moves = getHorizontalMoves(block, blocks, 6);
+    const moves = getHorizontalMoves(block, blocks, 6, true);
     expect(moves).toEqual([
       { id: 1, amount: 1, dir: 'x' },
       { id: 1, amount: 2, dir: 'x' },
     ]);
   });
-  test('should handle complex setup of blocks and possible moves', () => {
+  it('should handle complex setup of blocks and possible moves', () => {
     const blocks: Block[] = [
       { x: 2, y: 2, width: 2, height: 1, id: 1 },
       { x: 0, y: 0, width: 1, height: 3, id: 2 },
@@ -74,7 +74,15 @@ describe('getHorizontalMoves', () => {
       { x: 5, y: 0, width: 1, height: 1, id: 5 },
       { x: 1, y: 4, width: 3, height: 1, id: 6 },
     ];
-    const moves = getHorizontalMoves(blocks[0], blocks, 6);
+    const moves = getHorizontalMoves(blocks[0], blocks, 6, true);
     expect(moves).toEqual([{ id: 1, amount: -1, dir: 'x' }]);
+  });
+  it('should return no moves for a wide block when bidirectional movement is restricted', () => {
+    const blocks: Block[] = [{ id: 2, x: 2, y: 5, width: 1, height: 3 }];
+
+    const block = blocks[0];
+    const result = getHorizontalMoves(block, blocks, 12);
+
+    expect(result).toEqual([]);
   });
 });

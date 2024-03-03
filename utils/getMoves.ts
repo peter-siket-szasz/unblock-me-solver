@@ -1,9 +1,17 @@
 import { Block, Move } from '../types/types';
 
-export function getHorizontalMoves(block: Block, blocks: Block[], maxWidth = 6): Move[] {
+/**
+ * @param block The block to move
+ * @param blocks The blocks on the board (can include the block to move)
+ * @param maxWidth Width of the board
+ * @param bidirectional Whether to allow moving in both directions
+ * @returns The possible moves for the block as an array of Move objects
+ */
+export function getHorizontalMoves(block: Block, blocks: Block[], maxWidth = 6, bidirectional = false): Move[] {
   const { id, y, width, height } = block;
   let { x } = block;
   const moves: Move[] = [];
+  if (!bidirectional && width < height) return [];
 
   // Filter out the moving block itself
   const otherBlocks = blocks.filter((b) => b.id !== block.id);
@@ -37,10 +45,19 @@ export function getHorizontalMoves(block: Block, blocks: Block[], maxWidth = 6):
   return moves;
 }
 
-export function getVerticalMoves(block: Block, blocks: Block[], maxHeight = 6): Move[] {
+/**
+ * @param block The block to move
+ * @param blocks The blocks on the board (can include the block to move)
+ * @param maxHeight Height of the board
+ * @param bidirectional Whether to allow moving in both directions
+ * @returns The possible moves for the block as an array of Move objects
+ */
+export function getVerticalMoves(block: Block, blocks: Block[], maxHeight = 6, bidirectional = false): Move[] {
   const { id, x, width, height } = block;
   let { y } = block;
   const moves: Move[] = [];
+
+  if (!bidirectional && height < width) return [];
 
   // Filter out the moving block itself
   const otherBlocks = blocks.filter((b) => b.id !== block.id);
@@ -74,8 +91,16 @@ export function getVerticalMoves(block: Block, blocks: Block[], maxHeight = 6): 
   return moves;
 }
 
-export function getMoves(block: Block, blocks: Block[], maxWidth = 6, maxHeight = 6): Move[] {
-  const horizontalMoves = getHorizontalMoves(block, blocks, maxWidth);
-  const verticalMoves = getVerticalMoves(block, blocks, maxHeight);
+/**
+ * @param block The block to move
+ * @param blocks The blocks on the board (can include the block to move)
+ * @param maxWidth Size of the board
+ * @param maxHeight Size of the board
+ * @param bidirectional Whether to allow moving in both directions
+ * @returns The possible moves for the block as an array of Move objects
+ */
+export function getMoves(block: Block, blocks: Block[], maxWidth = 6, maxHeight = 6, bidirectional = false): Move[] {
+  const horizontalMoves = getHorizontalMoves(block, blocks, maxWidth, bidirectional);
+  const verticalMoves = getVerticalMoves(block, blocks, maxHeight, bidirectional);
   return [...horizontalMoves, ...verticalMoves];
 }

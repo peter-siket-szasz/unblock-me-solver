@@ -3,7 +3,10 @@
     "lib": ["ESNext"],
     "sourceMap": true,
     "outDir": "out",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "target": "ESNext",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext"
   },
   "exclude": ["**/*.test.ts"]
 }

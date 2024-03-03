@@ -1,45 +1,45 @@
 import { Block, Move } from './types/types';
-import { stringifyBlocks } from './utils/utils';
+import { getMoves } from './utils/getMoves';
+import { makeMove, stringifyBlocks } from './utils/utils';
 
 const player = { x: 0, y: 2, width: 2, height: 1, id: 1 } satisfies Block;
 
-const blocks: Block[] = [player];
+const initialBlocks: Block[] = [player];
 
-function solve(blocks: Block[]): { moves: Move[] } {
-  const moves: Move[] = [];
+function solve(initialBlocks: Block[]): Move[] {
   const seen = new Set<string>();
-  const queue: Block[] = blocks;
+  const queue: { board: string; previousMoves: Move[] }[] = [
+    { board: JSON.stringify(initialBlocks), previousMoves: [] },
+  ];
   while (queue.length) {
-    const block = queue.shift();
-    if (block) {
-      const { id, x, y, width, height } = block;
-      const key = stringifyBlocks(blocks);
-      if (seen.has(key)) {
-        continue;
-      }
-      seen.add(key);
-      if (x === 4 && y === 2) {
-        return { moves };
-      }
-      const canMoveLeft = x > 0;
-      const canMoveRight = x + width < 6;
-      const canMoveUp = y > 0;
-      const canMoveDown = y + height < 6;
-      if (canMoveLeft) {
-        ('');
-      }
-      if (canMoveRight) {
-        ('');
-      }
-      if (canMoveUp) {
-        ('');
-      }
-      if (canMoveDown) {
-        ('');
-      }
+    // Pop first node from queue
+    const node = queue.shift();
+    // Initialize variables of current node
+    const { board, previousMoves } = node;
+    // Parse the board
+    const blocks = JSON.parse(board) as Block[];
+    // Find the player
+    const player = blocks.find((block) => block.id === 1);
+    // Check if solved
+    if (player.x === 4 && player.y === 2) {
+      return previousMoves;
+    }
+    // Check if seen
+    const key = stringifyBlocks(blocks);
+    if (seen.has(node.board)) {
+      continue;
+    }
+    seen.add(key);
+    // Get possible moves
+    const newMoves = blocks.map((block) => getMoves(block, blocks)).flat();
+    // Add new nodes to queue
+    for (const move of newMoves) {
+      const newBoard = JSON.stringify(makeMove(blocks, move));
+      queue.push({ board: newBoard, previousMoves: [...previousMoves, move] });
     }
   }
-  return { moves };
+  return [];
 }
 
-console.log(stringifyBlocks(blocks));
+console.log(stringifyBlocks(initialBlocks));
+console.log(solve(initialBlocks));
