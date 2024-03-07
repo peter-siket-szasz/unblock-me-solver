@@ -2,15 +2,27 @@ import { Block, Move } from './types/types';
 import { getMoves } from './utils/getMoves';
 import { makeMove, stringifyBlocks } from './utils/utils';
 
-const player = { x: 0, y: 2, width: 2, height: 1, id: 1 } satisfies Block;
-
-const initialBlocks: Block[] = [player];
-
-function solve(initialBlocks: Block[]): Move[] {
+/**
+ * Solves a given problem with
+ * @param initialBlocks The initial blocks on the board. Player should have index 1
+ * @param maxHeight Board height
+ * @param maxWidth Board width
+ * @param bidirectional Whether the blocks can move in both directions
+ * @returns A list of moves with the solution to the problem
+ */
+export function solve(initialBlocks: Block[], maxHeight = 6, maxWidth = 6, bidirectional = false, goalY = 2): Move[] {
   const seen = new Set<string>();
   const queue: { board: string; previousMoves: Move[] }[] = [
     { board: JSON.stringify(initialBlocks), previousMoves: [] },
   ];
+  // Check that players exists
+  const player = initialBlocks.find((block) => block.id === 1);
+  if (player === undefined) {
+    throw new Error('Player block not found');
+  }
+  if (!bidirectional && player.y !== goalY) {
+    throw new Error('Player block not in the correct row');
+  }
   while (queue.length) {
     // Pop first node from queue
     const node = queue.shift();
@@ -21,7 +33,7 @@ function solve(initialBlocks: Block[]): Move[] {
     // Find the player
     const player = blocks.find((block) => block.id === 1);
     // Check if solved
-    if (player.x === 4 && player.y === 2) {
+    if (player.x === maxWidth - player.width && player.y === goalY) {
       return previousMoves;
     }
     // Check if seen
@@ -31,7 +43,7 @@ function solve(initialBlocks: Block[]): Move[] {
     }
     seen.add(key);
     // Get possible moves
-    const newMoves = blocks.map((block) => getMoves(block, blocks)).flat();
+    const newMoves = blocks.map((block) => getMoves(block, blocks, maxWidth, maxHeight, bidirectional)).flat();
     // Add new nodes to queue
     for (const move of newMoves) {
       const newBoard = JSON.stringify(makeMove(blocks, move));
@@ -40,6 +52,3 @@ function solve(initialBlocks: Block[]): Move[] {
   }
   return [];
 }
-
-console.log(stringifyBlocks(initialBlocks));
-console.log(solve(initialBlocks));
