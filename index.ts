@@ -8,6 +8,7 @@ import { makeMove, stringifyBlocks } from './utils/utils';
  * @param maxHeight Board height
  * @param maxWidth Board width
  * @param bidirectional Whether the blocks can move in both directions
+ * @param goalY The row where the goal is
  * @returns A list of moves with the solution to the problem
  */
 export function solve(initialBlocks: Block[], maxHeight = 6, maxWidth = 6, bidirectional = false, goalY = 2): Move[] {

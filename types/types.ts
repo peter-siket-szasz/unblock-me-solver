@@ -2,8 +2,8 @@ export type Block = {
   id: number;
   x: number;
   y: number;
-  width: 1 | 2 | 3;
-  height: 1 | 2 | 3;
+  width: number;
+  height: number;
 };
 
 export type Move = {
