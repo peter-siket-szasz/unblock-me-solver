@@ -1,6 +1,6 @@
 {
   "name": "unblock-me-solver",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A package that solves the given unblock-me puzzle case",
   "main": "out/index.js",
   "scripts": {
