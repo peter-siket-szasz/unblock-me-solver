@@ -1,6 +1,6 @@
 import { Block, Move, State } from './types/types';
 import { getMoves } from './utils/getMoves';
-import { getId, makeMove, stringifyBlocks } from './utils/utils';
+import { getId, makeMove } from './utils/utils';
 
 /**
  * Solves a given problem with
@@ -34,11 +34,10 @@ export function solve(initialBlocks: Block[], maxHeight = 6, maxWidth = 6, bidir
       return previousMoves;
     }
     // Check if seen
-    const key = stringifyBlocks(blocks);
     if (seen.has(node.id)) {
       continue;
     }
-    seen.add(key);
+    seen.add(node.id);
     // Get possible moves
     const newMoves = blocks.map((block) => getMoves(block, blocks, maxWidth, maxHeight, bidirectional)).flat();
     // Add new nodes to queue
