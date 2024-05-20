@@ -14,9 +14,7 @@ const utils_1 = require("./utils/utils");
  */
 function solve(initialBlocks, maxHeight = 6, maxWidth = 6, bidirectional = false, goalY = 2) {
     const seen = new Set();
-    const queue = [
-        { board: JSON.stringify(initialBlocks), previousMoves: [] },
-    ];
+    const queue = [{ blocks: initialBlocks, previousMoves: [], id: (0, utils_1.getId)(initialBlocks) }];
     // Check that players exists
     const player = initialBlocks.find((block) => block.id === 1);
     if (player === undefined) {
@@ -29,9 +27,7 @@ function solve(initialBlocks, maxHeight = 6, maxWidth = 6, bidirectional = false
         // Pop first node from queue
         const node = queue.shift();
         // Initialize variables of current node
-        const { board, previousMoves } = node;
-        // Parse the board
-        const blocks = JSON.parse(board);
+        const { blocks, previousMoves } = node;
         // Find the player
         const player = blocks.find((block) => block.id === 1);
         // Check if solved
@@ -39,20 +35,24 @@ function solve(initialBlocks, maxHeight = 6, maxWidth = 6, bidirectional = false
             return previousMoves;
         }
         // Check if seen
-        const key = (0, utils_1.stringifyBlocks)(blocks);
-        if (seen.has(node.board)) {
+        if (seen.has(node.id)) {
             continue;
         }
-        seen.add(key);
+        seen.add(node.id);
         // Get possible moves
         const newMoves = blocks.map((block) => (0, getMoves_1.getMoves)(block, blocks, maxWidth, maxHeight, bidirectional)).flat();
         // Add new nodes to queue
         for (const move of newMoves) {
-            const newBoard = JSON.stringify((0, utils_1.makeMove)(blocks, move));
-            queue.push({ board: newBoard, previousMoves: [...previousMoves, move] });
+            const newBoard = (0, utils_1.makeMove)(blocks, move);
+            queue.push({
+                blocks: newBoard,
+                previousMoves: [...previousMoves, move],
+                id: (0, utils_1.getId)(newBoard),
+            });
         }
     }
     return [];
 }
 exports.solve = solve;
+console.log(solve([{ id: 1, x: 1, y: 2, width: 2, height: 1 }], 6, 6, false, 2));
 //# sourceMappingURL=index.js.map

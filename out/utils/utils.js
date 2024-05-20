@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makeMove = exports.stringifyBlocks = void 0;
+exports.makeMove = exports.getId = exports.stringifyBlocks = void 0;
 /**
  * @param blocks The array of blocks on the board
  * @returns A stringified representation of the blocks for comparison purposes
@@ -12,6 +12,10 @@ function stringifyBlocks(blocks) {
         .join('');
 }
 exports.stringifyBlocks = stringifyBlocks;
+function getId(blocks) {
+    return blocks.map((block) => `${block.x}${block.y}`).join('');
+}
+exports.getId = getId;
 /**
  * @param blocks The array of blocks on the board
  * @param move The move to make
