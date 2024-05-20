@@ -1,6 +1,6 @@
-import { Block, Move } from './types/types';
+import { Block, Move, State } from './types/types';
 import { getMoves } from './utils/getMoves';
-import { makeMove, stringifyBlocks } from './utils/utils';
+import { getId, makeMove, stringifyBlocks } from './utils/utils';
 
 /**
  * Solves a given problem with
@@ -13,9 +13,7 @@ import { makeMove, stringifyBlocks } from './utils/utils';
  */
 export function solve(initialBlocks: Block[], maxHeight = 6, maxWidth = 6, bidirectional = false, goalY = 2): Move[] {
   const seen = new Set<string>();
-  const queue: { board: string; previousMoves: Move[] }[] = [
-    { board: JSON.stringify(initialBlocks), previousMoves: [] },
-  ];
+  const queue: State[] = [{ blocks: initialBlocks, previousMoves: [], id: getId(initialBlocks) }];
   // Check that players exists
   const player = initialBlocks.find((block) => block.id === 1);
   if (player === undefined) {
@@ -28,9 +26,7 @@ export function solve(initialBlocks: Block[], maxHeight = 6, maxWidth = 6, bidir
     // Pop first node from queue
     const node = queue.shift();
     // Initialize variables of current node
-    const { board, previousMoves } = node;
-    // Parse the board
-    const blocks = JSON.parse(board) as Block[];
+    const { blocks, previousMoves } = node;
     // Find the player
     const player = blocks.find((block) => block.id === 1);
     // Check if solved
@@ -39,7 +35,7 @@ export function solve(initialBlocks: Block[], maxHeight = 6, maxWidth = 6, bidir
     }
     // Check if seen
     const key = stringifyBlocks(blocks);
-    if (seen.has(node.board)) {
+    if (seen.has(node.id)) {
       continue;
     }
     seen.add(key);
@@ -47,8 +43,12 @@ export function solve(initialBlocks: Block[], maxHeight = 6, maxWidth = 6, bidir
     const newMoves = blocks.map((block) => getMoves(block, blocks, maxWidth, maxHeight, bidirectional)).flat();
     // Add new nodes to queue
     for (const move of newMoves) {
-      const newBoard = JSON.stringify(makeMove(blocks, move));
-      queue.push({ board: newBoard, previousMoves: [...previousMoves, move] });
+      const newBoard = makeMove(blocks, move);
+      queue.push({
+        blocks: newBoard,
+        previousMoves: [...previousMoves, move],
+        id: getId(newBoard),
+      });
     }
   }
   return [];

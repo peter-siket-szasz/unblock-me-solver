@@ -11,6 +11,10 @@ export function stringifyBlocks(blocks: Block[]): string {
     .join('');
 }
 
+export function getId(blocks: Block[]): string {
+  return blocks.map((block) => `${block.x}${block.y}`).join('');
+}
+
 /**
  * @param blocks The array of blocks on the board
  * @param move The move to make

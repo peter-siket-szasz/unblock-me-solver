@@ -11,3 +11,9 @@ export type Move = {
   amount: number;
   dir: 'x' | 'y';
 };
+
+export type State = {
+  id: string;
+  blocks: Block[];
+  previousMoves: Move[];
+};
