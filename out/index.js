@@ -54,5 +54,4 @@ function solve(initialBlocks, maxHeight = 6, maxWidth = 6, bidirectional = false
     return [];
 }
 exports.solve = solve;
-console.log(solve([{ id: 1, x: 1, y: 2, width: 2, height: 1 }], 6, 6, false, 2));
 //# sourceMappingURL=index.js.map
